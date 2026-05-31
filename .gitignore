@@ -1,13 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.mypy_cache/
+.pytest_cache/
+
 # Виртуальное окружение
 venv/
+env/
+.venv/
 
-# Кэш Python
-__pycache__/
-*.pyc
-
-# База данных SQLite (если будет)
+# Django
 *.sqlite3
+media/
+staticfiles/
 
-# Файлы среды
+# Секреты
 .env
-settings.py
+local_settings.py
+
+# Покрытие тестов
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log
+
+# Архивы
+*.zip
+*.tar.gz
