@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Share a post{% endblock title %}
+{% block content %}
+  <h1>Share "{{ post.title }}" by e-mail</h1>
+  <form method="post" novalidate>
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input type="submit" value="Send e-mail">
+  </form>
+  <p><a href="{{ post.get_absolute_url }}">Back to the post</a></p>
+{% endblock content %}
