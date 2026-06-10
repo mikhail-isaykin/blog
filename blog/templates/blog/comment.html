@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Add a comment{% endblock title %}
+{% block content %}
+  {% include "includes/comment_form.html" %}
+  <p><a href="{{ post.get_absolute_url }}">Back to the post</a></p>
+{% endblock content %}
