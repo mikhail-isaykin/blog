@@ -1,2 +1,7 @@
+line-length = 120
+
 [format]
 quote-style = "single"
+
+[lint]
+extend-select = ["I"]
