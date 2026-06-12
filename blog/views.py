@@ -2,17 +2,34 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView
+from taggit.models import Tag
+from django.db.models import Count
 
-from .forms import EmailPostForm
+from .forms import CommentForm, EmailPostForm
 from .models import Post
 
 
 class PostListView(ListView):
-    queryset = Post.published.all()
     context_object_name = 'posts'
     paginate_by = 3
     template_name = 'blog/list.html'
+    
+    def get_queryset(self):
+        queryset = Post.published.prefetch_related('tags')
+        self.tag = None
+        
+        tag_slug = self.kwargs.get('tag_slug')
+        if tag_slug:
+            self.tag = get_object_or_404(Tag, slug=tag_slug)
+            queryset = queryset.filter(tags=self.tag)
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = self.tag
+        return context
 
 
 def post_detail(request, year, month, day, slug):
@@ -23,7 +40,21 @@ def post_detail(request, year, month, day, slug):
         publish__day=day,
         slug=slug,
     )
-    return render(request, 'blog/detail.html', {'post': post})
+    comments = post.comments.filter(active=True)
+    form = CommentForm()
+    post_tags_ids = post.tags.values_list('pk', flat=True)
+    similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(pk=post.pk)
+    similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags', '-publish')[:4]
+    return render(
+        request,
+        'blog/detail.html',
+        {
+            'post': post,
+            'comments': comments,
+            'form': form,
+            'similar_posts': similar_posts,
+        }
+    )
 
 
 def post_share(request, pk):
@@ -50,3 +81,16 @@ def post_share(request, pk):
             'form': form,
         },
     )
+
+
+@require_POST
+def post_comment(request, pk):
+    post = get_object_or_404(Post.published, pk=pk)
+    form = CommentForm(data=request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+        messages.success(request, 'Комментарий добавлен!')
+        return redirect(post.get_absolute_url())
+    return render(request, 'blog/comment.html', {'post': post, 'form': form, 'comment': comment})
