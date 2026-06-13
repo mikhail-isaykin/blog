@@ -11,6 +11,9 @@
       {% endblock title %}
     </title>
     <link href="{% static 'css/blog.css' %}" rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js"></script>
     {% block canonical %}
     {% endblock canonical %}
   </head>
@@ -40,5 +43,6 @@
         {% endfor %}
       </ul>
     </div>
+    <script>hljs.highlightAll();</script>
   </body>
 </html>

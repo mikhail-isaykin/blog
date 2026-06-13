@@ -3,8 +3,8 @@
 {% block content %}
   <h1>Share "{{ post.title }}" by e-mail</h1>
   <form method="post" novalidate>
-    {{ form.as_p }}
     {% csrf_token %}
+    {{ form.as_p }}
     <input type="submit" value="Send e-mail">
   </form>
   <p><a href="{{ post.get_absolute_url }}">Back to the post</a></p>

@@ -20,6 +20,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+SITE_ID = 1
+
 INSTALLED_APPS = [
     'unfold',
     'django.contrib.admin',
@@ -31,6 +33,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'blog.apps.BlogConfig',
     'taggit',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [
