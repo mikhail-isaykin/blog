@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
-from django.views import generic
+from django.views.generic import View
 
-from .forms import SignUpForm
+from .forms import LoginForm, SignUpForm
 
 
-class SignUpView(generic.View):
+class SignUpView(View):
     form_class = SignUpForm
     initial = {}
     template_name = 'registration/signup.html'
@@ -33,3 +34,18 @@ class SignUpView(generic.View):
             return redirect(to='blog:post_list')
 
         return render(request, self.template_name, {'form': form})
+
+
+class CustomLoginView(LoginView):
+    form_class = LoginForm
+    redirect_authenticated_user=True
+    template_name='registration/login.html'
+    
+    def form_valid(self, form):
+        remember_me = form.cleaned_data.get('remember_me')
+        
+        if not remember_me:
+            self.request.session.set_expiry(0)
+            self.request.session.modified = True
+            
+        return super().form_valid(form)
