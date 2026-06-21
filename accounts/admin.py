@@ -12,7 +12,7 @@ admin.site.unregister(Group)
 
 @admin.register(User)
 class UserAdmin(ModelAdmin):
-    list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active']
+    list_display = ['pk', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active']
     list_display_links = ['username']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'groups']
     search_fields = ['username', 'first_name', 'last_name', 'email']

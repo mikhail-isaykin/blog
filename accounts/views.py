@@ -28,7 +28,7 @@ class SignUpView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}')
             return redirect(to='blog:post_list')
