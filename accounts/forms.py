@@ -8,35 +8,59 @@ User = get_user_model()
 
 
 class SignUpForm(UserCreationForm):
-    email = forms.EmailField(max_length=200, required=True)
-
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Enter Username'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Enter First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Enter Last Name'}),
+            'email': forms.TextInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Enter your E-Mail'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Enter password'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Confirm Password'}),
+        }
 
-
-class LoginForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs['placeholder'] = 'Username'
-        self.fields['password'].widget.attrs['placeholder'] = 'Password'
-        
-    remember_me = forms.BooleanField(required=False)
-
-
-class UpdateUserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'email']
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['email'].required = True
 
+
+class LoginForm(AuthenticationForm):
+    remember_me = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update(
+            {
+                'class': 'form-control mb-1',
+                'placeholder': 'Username',
+            }
+        )
+        self.fields['password'].widget.attrs.update(
+            {
+                'class': 'form-control mb-1',
+                'placeholder': 'Password',
+            }
+        )
+
+
+class UpdateUserForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Username'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control mb-1', 'placeholder': 'Email'}),
+        }
+
+
 class UpdateProfileForm(forms.ModelForm):
-    avatar = forms.ImageField(widget=forms.FileInput())
-    bio = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}))
-    
     class Meta:
         model = Profile
         fields = ['avatar', 'bio']
+        widgets = {
+            'avatar': forms.FileInput(attrs={'class': 'form-control mb-1'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control'}),
+        }
